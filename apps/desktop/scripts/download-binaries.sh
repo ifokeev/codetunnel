@@ -20,6 +20,13 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     curl -L "https://github.com/tsl0922/ttyd/releases/download/${TTYD_VERSION}/ttyd.x86_64.darwin" \
         -o src-tauri/resources/macos/ttyd
     chmod +x src-tauri/resources/macos/ttyd
+    
+    # Download cloudflared for macOS  
+    curl -L "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-darwin-amd64.tgz" \
+        -o /tmp/cloudflared-darwin.tgz
+    tar -xzf /tmp/cloudflared-darwin.tgz -C src-tauri/resources/macos/
+    rm /tmp/cloudflared-darwin.tgz
+fi
 
 # Linux binaries
 echo "Downloading Linux binaries..."
