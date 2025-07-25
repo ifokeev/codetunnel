@@ -98,9 +98,9 @@ async fn start_terminal(
     // Generate random port
     let port = get_random_port()?;
     
-    // Generate random 6-digit password
+    // Generate random 6-digit password and username
     let password = generate_password();
-    let username = "user".to_string();
+    let username = generate_username();
     
     // Start ttyd process
     let shell = if cfg!(target_os = "windows") {
@@ -351,6 +351,24 @@ fn generate_password() -> String {
     (0..6)
         .map(|_| rng.gen_range(0..10).to_string())
         .collect::<String>()
+}
+
+fn generate_username() -> String {
+    let mut rng = rand::thread_rng();
+    let adjectives = vec![
+        "quick", "bright", "calm", "brave", "cool", "smart", "swift", "bold", "keen", "wise",
+        "fair", "kind", "warm", "glad", "neat", "pure", "safe", "clear", "fresh", "light"
+    ];
+    let nouns = vec![
+        "fox", "wolf", "bear", "hawk", "deer", "owl", "lynx", "seal", "crow", "dove",
+        "lion", "tiger", "eagle", "shark", "whale", "otter", "raven", "heron", "finch", "swan"
+    ];
+    
+    let adjective = adjectives[rng.gen_range(0..adjectives.len())];
+    let noun = nouns[rng.gen_range(0..nouns.len())];
+    let number = rng.gen_range(10..99);
+    
+    format!("{}{}{}", adjective, noun, number)
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

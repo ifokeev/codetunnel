@@ -134,9 +134,9 @@ input[type="text"] {
 }
 
 .copy-btn:hover {
-  background-color: var(--accent);
+  color: var(--accent);
   border-color: var(--accent);
-  color: var(--bg-primary);
+  box-shadow: 0 0 8px var(--shadow);
 }
 
 .footer {
@@ -160,6 +160,9 @@ input[type="text"] {
   transition: all 0.2s;
   background-color: var(--bg-secondary);
   color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
 }
 
 .btn:disabled {
@@ -167,20 +170,17 @@ input[type="text"] {
   cursor: not-allowed;
 }
 
-.btn-start:hover:not(:disabled) {
-  background-color: var(--accent);
+.btn-start:not(:disabled):hover {
+  color: var(--accent);
   border-color: var(--accent);
-  color: var(--bg-primary);
+  box-shadow: 0 0 12px var(--shadow);
 }
 
-.btn-stop {
-  border-color: var(--error);
-  color: var(--error);
-}
-
-.btn-stop:hover:not(:disabled) {
+.btn-stop:not(:disabled):hover {
   background-color: var(--error);
   color: white;
+  border-color: var(--error);
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.4);
 }
 
 .error-message {
