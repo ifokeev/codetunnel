@@ -31,9 +31,9 @@ The project is structured as a monorepo using pnpm workspaces, with the desktop 
 ### Core Components
 
 **Frontend** (`src/`)
-- Main UI entry point showing connection status and generated URL
+- React-based UI with modern dark theme design
 - Start/Stop controls for terminal sessions
-- Real-time display of connection details (port, password, URL)
+- Real-time display of secure connection URL with copy functionality
 
 **Tauri Backend** (`src-tauri/`)
 - `src-tauri/src/main.rs` - Application entry point
@@ -44,21 +44,30 @@ The project is structured as a monorepo using pnpm workspaces, with the desktop 
 ### Key Implementation Areas
 
 1. **Process Management**
-   - Spawn and monitor ttyd subprocess on random port
+   - Spawn and monitor ttyd subprocess on random port with secret base path
    - Spawn and monitor cloudflared subprocess for tunnel creation
    - Graceful shutdown handling on app close
    - Parse cloudflared output to extract tunnel URL
+   - Real-time process health monitoring
 
 2. **State Management**
    - Tauri state for process handles and connection info
    - Mutex-protected shared state between commands
    - Event emission for UI updates
+   - Terminal info includes URL with secret token
 
 3. **Binary Bundling**
    - Platform-specific binaries in `src-tauri/resources/{macos,windows,linux}/`
+   - ttyd and cloudflared binaries for each platform
    - Automatic executable permission setting on Unix
    - Resource path resolution using Tauri's path API
-   - Clear error messages if binaries are missing
+   - Download script available at `scripts/download-binaries.sh`
+
+4. **Authentication Strategy**
+   - URL-based security using 32-character random tokens
+   - ttyd runs with `--base-path /<secret-token>` for access control
+   - No traditional authentication due to ttyd WebSocket proxy limitations
+   - Works seamlessly with Cloudflare tunnels and mobile devices
 
 ### Tauri Commands
 
@@ -69,7 +78,26 @@ The app implements these core commands:
 
 ### Security Considerations
 
-- Generate random 6-digit passwords for each session
-- Validate all process arguments before execution
-- Handle subprocess errors without exposing system details
-- Implement connection timeouts for stale sessions
+- Generate 32-character random tokens for URL-based authentication
+- Each terminal session has a unique secret path (e.g., `/AbCdEf...`)
+- Only users with the complete URL can access the terminal
+- No password/username authentication due to ttyd WebSocket limitations
+- Suitable for temporary sessions; use Cloudflare Access for production
+
+### Known Issues & Workarounds
+
+1. **ttyd WebSocket Authentication Bug**
+   - Issue: ttyd's credential authentication fails through proxies
+   - Workaround: Using URL path-based security instead
+   - Reference: https://github.com/tsl0922/ttyd/issues/1293
+
+2. **Mobile Compatibility**
+   - Works perfectly with the URL-based authentication approach
+   - No CORS or WebSocket issues on mobile Safari
+
+### Binary Sources
+
+- **ttyd**: Currently using system-installed version via Homebrew
+  - Future: Use official releases from https://github.com/tsl0922/ttyd
+- **cloudflared**: Downloaded from official Cloudflare releases
+  - Version specified in `scripts/download-binaries.sh`

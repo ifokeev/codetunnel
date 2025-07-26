@@ -102,6 +102,9 @@ async fn start_terminal(
     let password = generate_password();
     let username = generate_username();
     
+    // Generate a random base path that acts as a secret token
+    let secret_token = generate_secret_token();
+    
     // Start ttyd process
     let shell = if cfg!(target_os = "windows") {
         "cmd.exe"
@@ -111,13 +114,13 @@ async fn start_terminal(
         "/bin/bash"
     };
     
+    // Run ttyd with a secret base path for security
+    // This acts as authentication since only those who know the path can connect
     let ttyd_cmd = Command::new(&ttyd_path)
         .args(&[
-            "-p", &port.to_string(),
-            "-i", "0.0.0.0",  // Bind to all interfaces
-            "-c", &format!("{}:{}", username, password),
-            "-t", "theme={\"background\": \"#000\"}",
-            "-W",  // Writable
+            "--writable",
+            "--port", &port.to_string(),
+            "--base-path", &format!("/{}", secret_token),
             shell
         ])
         .stdout(std::process::Stdio::piped())
@@ -126,9 +129,32 @@ async fn start_terminal(
     
     let mut ttyd_process = ttyd_cmd.map_err(|e| format!("Failed to start ttyd: {}", e))?;
     
+    // Spawn threads to capture and print ttyd output
+    if let Some(stdout) = ttyd_process.stdout.take() {
+        thread::spawn(move || {
+            let reader = BufReader::new(stdout);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    println!("ttyd stdout: {}", line);
+                }
+            }
+        });
+    }
+    
+    if let Some(stderr) = ttyd_process.stderr.take() {
+        thread::spawn(move || {
+            let reader = BufReader::new(stderr);
+            for line in reader.lines() {
+                if let Ok(line) = line {
+                    println!("ttyd stderr: {}", line);
+                }
+            }
+        });
+    }
+    
     println!("Started ttyd on port {}", port);
     
-    // Give ttyd more time to start and bind to the port
+    // Give ttyd time to start and bind to the port
     std::thread::sleep(std::time::Duration::from_secs(2));
     
     // Check if ttyd is still running
@@ -136,39 +162,12 @@ async fn start_terminal(
         return Err(format!("ttyd exited immediately with status: {:?}", status));
     }
     
-    // Verify ttyd is listening on the port by trying to connect
-    let max_attempts = 10;
-    let mut ttyd_ready = false;
-    for i in 0..max_attempts {
-        match std::net::TcpStream::connect(format!("127.0.0.1:{}", port)) {
-            Ok(_) => {
-                // Successfully connected, ttyd is listening
-                println!("Verified ttyd is listening on port {} (attempt {})", port, i + 1);
-                ttyd_ready = true;
-                break;
-            }
-            Err(_) => {
-                // Can't connect yet, wait a bit more
-                if i == max_attempts - 1 {
-                    let _ = ttyd_process.kill();
-                    return Err("ttyd failed to start listening on port".to_string());
-                }
-                std::thread::sleep(std::time::Duration::from_millis(500));
-            }
-        }
-    }
-    
-    if !ttyd_ready {
-        let _ = ttyd_process.kill();
-        return Err("ttyd is not responding on the expected port".to_string());
-    }
-    
     // Start cloudflared tunnel with output capture
     println!("Starting cloudflared tunnel for http://localhost:{}", port);
     let cloudflared_cmd = Command::new(&cloudflared_path)
         .args(&[
             "tunnel",
-            "--no-autoupdate",
+            "--loglevel", "debug",
             "--url",
             &format!("http://localhost:{}", port)
         ])
@@ -182,78 +181,55 @@ async fn start_terminal(
     let stderr = cloudflared_process.stderr.take().ok_or("Failed to capture cloudflared output")?;
     
     // Parse cloudflared output in a separate thread
-    let url_receiver = thread::spawn(move || -> Result<String, String> {
+    let (url_sender, url_receiver) = std::sync::mpsc::channel();
+    
+    thread::spawn(move || {
         let reader = BufReader::new(stderr);
-        let mut tunnel_url = String::new();
-        let mut connection_ready = false;
-        let start_time = std::time::Instant::now();
-        let timeout = std::time::Duration::from_secs(30);
+        let mut tunnel_url_found = false;
         
         for line in reader.lines() {
-            if start_time.elapsed() > timeout {
-                return Err("Timeout waiting for tunnel URL".to_string());
-            }
             if let Ok(line) = line {
                 println!("Cloudflared: {}", line);
                 
                 // Look for the tunnel URL in the output
-                if line.contains("https://") && line.contains(".trycloudflare.com") {
+                if !tunnel_url_found && line.contains("https://") && line.contains(".trycloudflare.com") {
                     if let Some(start) = line.find("https://") {
-                        if let Some(end) = line[start..].find(' ') {
-                            tunnel_url = line[start..start + end].to_string();
+                        let tunnel_url = if let Some(end) = line[start..].find(' ') {
+                            line[start..start + end].to_string()
                         } else {
-                            tunnel_url = line[start..].to_string();
-                        }
+                            line[start..].to_string()
+                        };
                         println!("Found tunnel URL: {}", tunnel_url);
+                        tunnel_url_found = true;
+                        // Send URL but continue reading to prevent SIGPIPE
+                        let _ = url_sender.send(tunnel_url);
                     }
-                }
-                
-                // Check if tunnel connection is registered
-                if line.contains("Connection") && line.contains("registered") {
-                    println!("Connection registered!");
-                    connection_ready = true;
-                    // Wait a bit more to ensure tunnel is fully established
-                    std::thread::sleep(std::time::Duration::from_secs(2));
-                    if !tunnel_url.is_empty() {
-                        break;
-                    }
-                }
-                
-                // Also check for "Starting metrics server" as an indicator the tunnel is ready
-                if line.contains("Starting metrics server") && !tunnel_url.is_empty() {
-                    println!("Tunnel is ready (metrics server started)!");
-                    std::thread::sleep(std::time::Duration::from_secs(1));
-                    break;
                 }
             }
         }
-        
-        if tunnel_url.is_empty() {
-            Err("Failed to get tunnel URL from cloudflared".to_string())
-        } else {
-            Ok(tunnel_url)
-        }
+        println!("Cloudflared stderr reader thread ending");
     });
     
     // Wait for tunnel URL (with timeout)
-    let url = match url_receiver.join() {
-        Ok(Ok(url)) => url,
-        Ok(Err(e)) => {
-            // Clean up processes
-            let _ = ttyd_process.kill();
-            let _ = cloudflared_process.kill();
-            return Err(e);
+    let url = match url_receiver.recv_timeout(std::time::Duration::from_secs(30)) {
+        Ok(url) => {
+            // Wait a bit for DNS propagation
+            std::thread::sleep(std::time::Duration::from_secs(2));
+            url
         }
         Err(_) => {
             // Clean up processes
             let _ = ttyd_process.kill();
             let _ = cloudflared_process.kill();
-            return Err("Failed to parse cloudflared output".to_string());
+            return Err("Failed to get tunnel URL from cloudflared".to_string());
         }
     };
     
+    // Append the secret path to the URL
+    let full_url = format!("{}/{}", url, secret_token);
+    
     let terminal_info = TerminalInfo {
-        url: url.clone(),
+        url: full_url.clone(),
         username: username.clone(),
         password: password.clone(),
         port,
@@ -264,11 +240,43 @@ async fn start_terminal(
     state.cloudflared_process = Some(cloudflared_process);
     state.terminal_info = Some(terminal_info.clone());
     
+    // Spawn a thread to monitor process health
+    let app_handle_clone = app_handle.clone();
+    thread::spawn(move || {
+        loop {
+            std::thread::sleep(std::time::Duration::from_secs(1));
+            
+            // Check if processes are still running
+            if let Ok(mut state) = app_handle_clone.state::<Mutex<AppState>>().lock() {
+                let mut processes_failed = false;
+                
+                if let Some(ref mut ttyd) = state.ttyd_process {
+                    if let Ok(Some(status)) = ttyd.try_wait() {
+                        println!("ERROR: ttyd process exited with status: {:?}", status);
+                        processes_failed = true;
+                    }
+                }
+                
+                if let Some(ref mut cloudflared) = state.cloudflared_process {
+                    if let Ok(Some(status)) = cloudflared.try_wait() {
+                        println!("ERROR: cloudflared process exited with status: {:?}", status);
+                        processes_failed = true;
+                    }
+                }
+                
+                if processes_failed {
+                    println!("CRITICAL: One or more processes have failed!");
+                    break;
+                }
+            }
+        }
+    });
+    
     // Emit status update
     app_handle.emit("terminal-status", TerminalStatus {
         running: true,
-        url: Some(url),
-        username: Some(username),
+        url: Some(full_url),
+        username: Some(username),  
         password: Some(password),
         port: Some(port),
     }).map_err(|e| e.to_string())?;
@@ -370,6 +378,21 @@ fn generate_username() -> String {
     
     format!("{}{}{}", adjective, noun, number)
 }
+
+fn generate_secret_token() -> String {
+    use rand::Rng;
+    let mut rng = rand::thread_rng();
+    
+    // Generate a 32-character random token
+    const CHARSET: &[u8] = b"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    (0..32)
+        .map(|_| {
+            let idx = rng.gen_range(0..CHARSET.len());
+            CHARSET[idx] as char
+        })
+        .collect()
+}
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {

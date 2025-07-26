@@ -20,19 +20,24 @@ const ConnectionDetails = ({ status, onCopy }) => (
         <button className="copy-btn" onClick={() => onCopy(status.url)}>Copy</button>
       </div>
     </div>
-    <div className="connection-item">
-      <label>Username</label>
-      <div className="input-group">
-        <input type="text" value={status.username} readOnly />
-        <button className="copy-btn" onClick={() => onCopy(status.username)}>Copy</button>
+    <div className="connection-item" style={{ 
+      backgroundColor: 'rgba(255, 255, 255, 0.08)',
+      padding: '12px',
+      borderRadius: '6px',
+      marginTop: '12px'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+        <span style={{ fontSize: '14px' }}>🔒</span>
+        <label style={{ fontSize: '12px', margin: 0, fontWeight: '500', color: 'white' }}>Security</label>
       </div>
-    </div>
-    <div className="connection-item">
-      <label>Password</label>
-      <div className="input-group">
-        <input type="text" value={status.password} readOnly />
-        <button className="copy-btn" onClick={() => onCopy(status.password)}>Copy</button>
-      </div>
+      <p style={{ 
+        margin: 0, 
+        color: 'rgba(255, 255, 255, 0.9)', 
+        fontSize: '13px',
+        lineHeight: '1.4'
+      }}>
+        Protected by 32-character token in URL. Share only with trusted users.
+      </p>
     </div>
   </div>
 );
