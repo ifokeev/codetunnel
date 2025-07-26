@@ -5,8 +5,8 @@
 
 set -e
 
-SOURCE_ICON="src/assets/a1-shell-black.png"
-ICON_DIR="src-tauri/icons"
+SOURCE_ICON="apps/desktop/src/assets/a1-shell-black.png"
+ICON_DIR="apps/desktop/src-tauri/icons"
 
 # Check if ImageMagick is installed
 if ! command -v convert &> /dev/null; then
