@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    a1_shell_lib::run()
+    devtunnel_lib::run()
 }

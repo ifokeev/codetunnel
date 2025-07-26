@@ -3,20 +3,6 @@
 version = 4
 
 [[package]]
-name = "a1-shell"
-version = "0.1.0"
-dependencies = [
- "rand 0.8.5",
- "serde",
- "serde_json",
- "tauri",
- "tauri-build",
- "tauri-plugin-process",
- "tauri-plugin-shell",
- "tokio",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -552,6 +538,20 @@ dependencies = [
  "quote",
  "rustc_version",
  "syn 2.0.104",
+]
+
+[[package]]
+name = "devtunnel"
+version = "0.1.0"
+dependencies = [
+ "rand 0.8.5",
+ "serde",
+ "serde_json",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-process",
+ "tauri-plugin-shell",
+ "tokio",
 ]
 
 [[package]]

@@ -1,13 +1,13 @@
 {
-  "name": "a1-shell-monorepo",
+  "name": "devtunnel-monorepo",
   "version": "0.1.0",
   "private": true,
-  "description": "A1 Shell - Instant, secure web terminals",
+  "description": "DevTunnel - Instant, secure development tunnels for web terminals",
   "scripts": {
-    "dev": "pnpm --filter @a1-shell/desktop dev",
-    "build": "pnpm --filter @a1-shell/desktop build",
-    "tauri:dev": "pnpm --filter @a1-shell/desktop tauri:dev",
-    "tauri:build": "pnpm --filter @a1-shell/desktop tauri:build"
+    "dev": "pnpm --filter @devtunnel/desktop dev",
+    "build": "pnpm --filter @devtunnel/desktop build",
+    "tauri:dev": "pnpm --filter @devtunnel/desktop tauri:dev",
+    "tauri:build": "pnpm --filter @devtunnel/desktop tauri:build"
   },
   "devDependencies": {
     "turbo": "^2.3.3"

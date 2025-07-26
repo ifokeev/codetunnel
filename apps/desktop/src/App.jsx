@@ -127,10 +127,10 @@ function App() {
       {loading && <LoadingOverlay message={loadingMessage} />}
       
       <header className="header">
-        <img src="/src/assets/a1-shell-black.png" alt="A1 Shell" className="logo" />
+        <img src="/src/assets/devtunnel-logo.png" alt="DevTunnel" className="logo" />
         <div className="title-container">
-          <h1>A1 Shell</h1>
-          <p>Instant, secure web terminals</p>
+          <h1>DevTunnel</h1>
+          <p>Secure development tunnels</p>
         </div>
       </header>
       
