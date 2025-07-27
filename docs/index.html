@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevTunnel - AI-Powered Development from Anywhere</title>
-    <meta name="description" content="Access your development environment from iPad or mobile. Perfect for AI-assisted coding with Claude Code. Secure web terminals powered by Cloudflare.">
+    <title>CodeTunnel - AI-Powered Development from Anywhere</title>
+    <meta name="description"
+        content="Access your development environment from iPad or mobile. Perfect for AI-assisted coding with Claude Code. Secure web terminals powered by Cloudflare.">
     <link rel="icon" type="image/png" href="./favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
         <nav class="nav container">
             <div class="nav-brand">
-                <img src="./logo.png" alt="DevTunnel" class="nav-logo">
-                <span class="nav-title">DevTunnel</span>
+                <img src="./logo-sized-white.svg" alt="CodeTunnel" class="nav-logo-with-text">
             </div>
             <div class="nav-links">
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#how-it-works" class="nav-link">How it Works</a>
                 <a href="#download" class="nav-link">Download</a>
-                <a href="https://github.com/yourusername/devtunnel" class="nav-link">GitHub</a>
+                <a href="https://github.com/yourusername/CodeTunnel" class="nav-link">GitHub</a>
             </div>
         </nav>
     </header>
@@ -37,12 +39,15 @@
                     <span class="hero-subtitle">from Any Device</span>
                 </h1>
                 <p class="hero-description">
-                    Access your development environment from anywhere. Perfect for AI-assisted coding 
+                    Access your development environment from anywhere. Perfect for AI-assisted coding
                     with Claude Code on mobile devices. Powered by secure Cloudflare Tunnels.
                 </p>
                 <div class="hero-actions">
-                    <a href="#download" class="btn btn-primary">Download Now</a>
-                    <a href="https://github.com/yourusername/devtunnel" class="btn btn-secondary">View on GitHub</a>
+                    <a href="#download" class="btn btn-primary">
+                        <span class="btn-text">Download Now</span>
+                        <span class="btn-icon">🌺</span>
+                    </a>
+                    <a href="https://github.com/yourusername/CodeTunnel" class="btn btn-secondary">View on GitHub</a>
                 </div>
                 <div class="hero-platforms">
                     <span class="platform-label">Available for</span>
@@ -54,31 +59,60 @@
                 </div>
             </div>
             <div class="hero-visual">
-                <div class="terminal-window">
-                    <div class="terminal-header">
-                        <div class="terminal-buttons">
-                            <span class="terminal-button red"></span>
-                            <span class="terminal-button yellow"></span>
-                            <span class="terminal-button green"></span>
+                <div class="workflow-visual">
+                    <div class="workflow-step">
+                        <div class="step-icon">
+                            <div class="app-visual">
+                                <div class="app-dot"></div>
+                                <div class="app-text">CodeTunnel</div>
+                            </div>
                         </div>
-                        <span class="terminal-title">DevTunnel</span>
+                        <div class="step-text">Desktop App</div>
                     </div>
-                    <div class="terminal-body">
-                        <div class="terminal-line">
-                            <span class="terminal-prompt">$</span> devtunnel start
+
+                    <div class="workflow-arrow">
+                        <svg viewBox="0 0 60 20" class="arrow-svg">
+                            <path d="M0 10 L40 10 M40 10 L35 5 M40 10 L35 15" stroke="currentColor" stroke-width="2"
+                                fill="none" />
+                        </svg>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-icon">
+                            <div class="tunnel-visual">
+                                <div class="tunnel-ring"></div>
+                                <div class="tunnel-ring"></div>
+                                <div class="tunnel-ring"></div>
+                            </div>
                         </div>
-                        <div class="terminal-line">
-                            <span class="terminal-success">✓</span> Terminal ready for AI assistant
+                        <div class="step-text">Secure Tunnel</div>
+                    </div>
+
+                    <div class="workflow-arrow">
+                        <svg viewBox="0 0 60 20" class="arrow-svg">
+                            <path d="M0 10 L40 10 M40 10 L35 5 M40 10 L35 15" stroke="currentColor" stroke-width="2"
+                                fill="none" />
+                        </svg>
+                    </div>
+
+                    <div class="workflow-step">
+                        <div class="step-icon">
+                            <div class="web-terminal">
+                                <div class="browser-bar">
+                                    <div class="browser-dots">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </div>
+                                </div>
+                                <div class="terminal-content">
+                                    <span class="terminal-line">$</span>
+                                    <span class="terminal-line">$</span>
+                                    <span class="terminal-line active">$ _</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="terminal-line">
-                            <span class="terminal-success">✓</span> Creating secure tunnel...
-                        </div>
-                        <div class="terminal-line">
-                            <span class="terminal-success">✓</span> Connected! Share URL with Claude Code
-                        </div>
-                        <div class="terminal-line terminal-url">
-                            <span class="terminal-label">URL:</span> https://quick-fox-42.trycloudflare.com/a7b3f...
-                        </div>
+                        <div class="step-text">Web Terminal</div>
                     </div>
                 </div>
             </div>
@@ -88,7 +122,7 @@
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="container">
-            <h2 class="section-title">Why DevTunnel?</h2>
+            <h2 class="section-title">Why CodeTunnel?</h2>
             <div class="features-grid">
                 <div class="feature">
                     <div class="feature-icon">🚀</div>
@@ -143,7 +177,7 @@
             <div class="steps">
                 <div class="step">
                     <div class="step-number">1</div>
-                    <h3 class="step-title">Launch DevTunnel</h3>
+                    <h3 class="step-title">Launch CodeTunnel</h3>
                     <p class="step-description">Open the app and click "Start Terminal"</p>
                 </div>
                 <div class="step-arrow">→</div>
@@ -169,8 +203,9 @@
                 <div class="ai-text">
                     <h2 class="section-title">Perfect for AI-Assisted Development</h2>
                     <p class="ai-description">
-                        DevTunnel bridges the gap between your local development environment and AI coding assistants. 
-                        Work seamlessly with Claude Code, Gemini CLI, Codex, and other terminal-based AI tools from your iPad or mobile device.
+                        CodeTunnel bridges the gap between your local development environment and AI coding assistants.
+                        Work seamlessly with Claude Code, Gemini CLI, Codex, and other terminal-based AI tools from your
+                        iPad or mobile device.
                     </p>
                     <div class="ai-benefits">
                         <div class="ai-benefit">
@@ -223,25 +258,28 @@
             <div class="security-content">
                 <h2 class="section-title">Security First</h2>
                 <p class="security-description">
-                    DevTunnel uses URL-based authentication with cryptographically secure tokens. 
+                    CodeTunnel uses URL-based authentication with cryptographically secure tokens.
                     Each session is isolated and encrypted end-to-end via Cloudflare.
                 </p>
                 <div class="security-features">
                     <div class="security-feature">
                         <svg class="security-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>32-character random tokens</span>
                     </div>
                     <div class="security-feature">
                         <svg class="security-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>HTTPS-only connections</span>
                     </div>
                     <div class="security-feature">
                         <svg class="security-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span>No data persistence</span>
                     </div>
@@ -253,24 +291,27 @@
     <!-- Download Section -->
     <section id="download" class="download">
         <div class="container">
-            <h2 class="section-title">Download DevTunnel</h2>
+            <h2 class="section-title">Download CodeTunnel</h2>
             <p class="download-description">
                 Free and open source. Choose your platform below.
             </p>
             <div class="download-grid">
-                <a href="https://github.com/yourusername/devtunnel/releases/latest/download/DevTunnel_x.x.x_universal.dmg" class="download-card">
+                <a href="https://github.com/yourusername/CodeTunnel/releases/latest/download/CodeTunnel_x.x.x_universal.dmg"
+                    class="download-card">
                     <div class="download-icon">🍎</div>
                     <h3 class="download-title">macOS</h3>
                     <p class="download-info">Universal (Intel + Apple Silicon)</p>
                     <span class="download-button">Download .dmg</span>
                 </a>
-                <a href="https://github.com/yourusername/devtunnel/releases/latest/download/DevTunnel_x.x.x_x64-setup.exe" class="download-card">
+                <a href="https://github.com/yourusername/CodeTunnel/releases/latest/download/CodeTunnel_x.x.x_x64-setup.exe"
+                    class="download-card">
                     <div class="download-icon">🪟</div>
                     <h3 class="download-title">Windows</h3>
                     <p class="download-info">Windows 10/11 (64-bit)</p>
                     <span class="download-button">Download .exe</span>
                 </a>
-                <a href="https://github.com/yourusername/devtunnel/releases/latest/download/devtunnel_x.x.x_amd64.AppImage" class="download-card">
+                <a href="https://github.com/yourusername/CodeTunnel/releases/latest/download/CodeTunnel_x.x.x_amd64.AppImage"
+                    class="download-card">
                     <div class="download-icon">🐧</div>
                     <h3 class="download-title">Linux</h3>
                     <p class="download-info">AppImage (Universal)</p>
@@ -279,7 +320,7 @@
             </div>
             <div class="download-alternative">
                 <p>Or install from source:</p>
-                <code class="install-command">git clone https://github.com/yourusername/devtunnel.git</code>
+                <code class="install-command">git clone https://github.com/yourusername/CodeTunnel.git</code>
             </div>
         </div>
     </section>
@@ -289,25 +330,27 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-brand">
-                    <img src="./logo.png" alt="DevTunnel" class="footer-logo">
+                    <img src="./logo-sized-white.svg" alt="CodeTunnel" class="footer-logo">
                     <p class="footer-tagline">Secure development tunnels for everyone.</p>
                 </div>
                 <div class="footer-links">
                     <h4 class="footer-title">Resources</h4>
-                    <a href="https://github.com/yourusername/devtunnel" class="footer-link">GitHub</a>
-                    <a href="https://github.com/yourusername/devtunnel/releases" class="footer-link">Releases</a>
-                    <a href="https://github.com/yourusername/devtunnel/issues" class="footer-link">Issues</a>
-                    <a href="https://github.com/yourusername/devtunnel/wiki" class="footer-link">Documentation</a>
+                    <a href="https://github.com/yourusername/CodeTunnel" class="footer-link">GitHub</a>
+                    <a href="https://github.com/yourusername/CodeTunnel/releases" class="footer-link">Releases</a>
+                    <a href="https://github.com/yourusername/CodeTunnel/issues" class="footer-link">Issues</a>
+                    <a href="https://github.com/yourusername/CodeTunnel/wiki" class="footer-link">Documentation</a>
                 </div>
                 <div class="footer-links">
                     <h4 class="footer-title">Community</h4>
-                    <a href="https://github.com/yourusername/devtunnel/discussions" class="footer-link">Discussions</a>
-                    <a href="https://github.com/yourusername/devtunnel/blob/main/CONTRIBUTING.md" class="footer-link">Contributing</a>
-                    <a href="https://github.com/yourusername/devtunnel/blob/main/SECURITY.md" class="footer-link">Security</a>
+                    <a href="https://github.com/yourusername/CodeTunnel/discussions" class="footer-link">Discussions</a>
+                    <a href="https://github.com/yourusername/CodeTunnel/blob/main/CONTRIBUTING.md"
+                        class="footer-link">Contributing</a>
+                    <a href="https://github.com/yourusername/CodeTunnel/blob/main/SECURITY.md"
+                        class="footer-link">Security</a>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p class="footer-copyright">© 2025 DevTunnel. MIT License.</p>
+                <p class="footer-copyright">© 2025 CodeTunnel. MIT License.</p>
                 <p class="footer-attribution">Built with ❤️ using Tauri, ttyd, and Cloudflare.</p>
             </div>
         </div>
@@ -315,4 +358,5 @@
 
     <script src="./script.js"></script>
 </body>
+
 </html>

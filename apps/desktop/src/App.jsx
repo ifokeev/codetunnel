@@ -127,9 +127,9 @@ function App() {
       {loading && <LoadingOverlay message={loadingMessage} />}
       
       <header className="header">
-        <img src="/src/assets/devtunnel-logo.png" alt="DevTunnel" className="logo" />
+        <img src="/src/assets/codetunnel-logo.png" alt="CodeTunnel" className="logo" />
         <div className="title-container">
-          <h1>DevTunnel</h1>
+          <h1>CodeTunnel</h1>
           <p>Secure development tunnels</p>
         </div>
       </header>

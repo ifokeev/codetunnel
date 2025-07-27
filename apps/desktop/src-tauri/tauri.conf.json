@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "DevTunnel",
+  "productName": "CodeTunnel",
   "version": "0.1.0",
-  "identifier": "com.devtunnel.app",
+  "identifier": "com.codetunnel.app",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420",
@@ -13,7 +13,7 @@
     "withGlobalTauri": false,
     "windows": [
       {
-        "title": "DevTunnel",
+        "title": "CodeTunnel",
         "width": 500,
         "height": 700
       }
