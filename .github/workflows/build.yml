@@ -79,7 +79,13 @@ jobs:
     - name: Download binaries
       run: |
         chmod +x ./scripts/download-binaries.sh
-        ./scripts/download-binaries.sh
+        # Skip macOS ttyd download since we build it in the next step
+        if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
+          # Only download non-macOS binaries
+          ./scripts/download-binaries.sh --skip-macos-ttyd
+        else
+          ./scripts/download-binaries.sh
+        fi
       shell: bash
       
     - name: Build ttyd for macOS

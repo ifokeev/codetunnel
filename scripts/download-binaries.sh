@@ -7,6 +7,12 @@ set -e
 TTYD_VERSION="1.7.7"
 CLOUDFLARED_VERSION="2024.12.2"
 
+# Parse arguments
+SKIP_MACOS_TTYD=false
+if [[ "$1" == "--skip-macos-ttyd" ]]; then
+    SKIP_MACOS_TTYD=true
+fi
+
 # Create directories
 mkdir -p apps/desktop/src-tauri/resources/{macos,windows,linux}
 mkdir -p apps/desktop/src-tauri/resources/macos/{arm64,x86_64}
@@ -22,7 +28,9 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Setting up ttyd for macOS..."
     
     # First, try to use system ttyd if available
-    if command -v ttyd &> /dev/null; then
+    if [[ "$SKIP_MACOS_TTYD" == "true" ]]; then
+        echo "Skipping macOS ttyd (will be built separately)"
+    elif command -v ttyd &> /dev/null; then
         echo "Found system ttyd, creating universal binary..."
         SYSTEM_TTYD=$(which ttyd)
         
