@@ -9,6 +9,9 @@ TTYD_VERSION="1.7.7"
 
 echo "Building ttyd ${TTYD_VERSION} for macOS (CI)..."
 
+# Save the original directory where the script was called from
+ORIGINAL_DIR="$(pwd)"
+
 # Create build directory
 BUILD_DIR="/tmp/ttyd-build-$$"
 mkdir -p "$BUILD_DIR"
@@ -51,10 +54,11 @@ file ttyd
 ./ttyd --version || true
 
 # Copy to destination
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-DEST_DIR="$SCRIPT_DIR/../apps/desktop/src-tauri/resources/macos"
+echo "Original directory: $ORIGINAL_DIR"
 echo "Current directory: $(pwd)"
-echo "Script directory: $SCRIPT_DIR"
+
+# The destination is relative to where the script was called from
+DEST_DIR="$ORIGINAL_DIR/apps/desktop/src-tauri/resources/macos"
 echo "Destination directory: $DEST_DIR"
 mkdir -p "$DEST_DIR"
 echo "Copying ttyd to $DEST_DIR/ttyd"
