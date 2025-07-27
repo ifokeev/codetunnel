@@ -126,7 +126,7 @@ jobs:
         TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD || '' }}
       with:
         projectPath: apps/desktop
-        args: ${{ matrix.args }} --config ${{ matrix.platform == 'macos-latest' && 'tauri.macos.conf.json' || matrix.platform == 'windows-latest' && 'tauri.windows.conf.json' || 'tauri.linux.conf.json' }}
+        args: ${{ matrix.args }} --config ${{ matrix.platform == 'macos-latest' && 'src-tauri/tauri.macos.conf.json' || matrix.platform == 'windows-latest' && 'src-tauri/tauri.windows.conf.json' || 'src-tauri/tauri.linux.conf.json' }}
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
