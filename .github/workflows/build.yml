@@ -83,9 +83,13 @@ jobs:
         chmod +x ./scripts/build-ttyd-macos-ci.sh
         ./scripts/build-ttyd-macos-ci.sh
         # Verify ttyd was built successfully
+        echo "Checking for ttyd binary..."
+        pwd
         ls -la apps/desktop/src-tauri/resources/macos/
         if [ ! -f "apps/desktop/src-tauri/resources/macos/ttyd" ]; then
           echo "ERROR: ttyd binary was not created!"
+          echo "Looking for ttyd in build directory..."
+          find . -name "ttyd" -type f | head -20
           exit 1
         fi
         echo "ttyd binary size: $(stat -f%z apps/desktop/src-tauri/resources/macos/ttyd) bytes"
@@ -96,12 +100,22 @@ jobs:
         ./scripts/download-binaries.sh
       shell: bash
       
-    - name: Verify binaries before Tauri build
+    - name: Verify binaries before Tauri build (Unix)
+      if: matrix.platform != 'windows-latest'
       run: |
         echo "Checking binaries in resources directory:"
         find apps/desktop/src-tauri/resources -type f -name "ttyd*" -o -name "cloudflared*" | while read f; do
           echo "$f: $(file "$f") - Size: $(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null) bytes"
         done
+        
+    - name: Verify binaries before Tauri build (Windows)
+      if: matrix.platform == 'windows-latest'
+      shell: pwsh
+      run: |
+        Write-Host "Checking binaries in resources directory:"
+        Get-ChildItem -Path "apps/desktop/src-tauri/resources" -Recurse -Include "ttyd*", "cloudflared*" | ForEach-Object {
+          Write-Host "$($_.FullName): $($_.Length) bytes"
+        }
         
     - name: Build Tauri App
       uses: tauri-apps/tauri-action@v0

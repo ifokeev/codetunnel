@@ -51,10 +51,17 @@ file ttyd
 ./ttyd --version || true
 
 # Copy to destination
-DEST_DIR="$(dirname "$0")/../apps/desktop/src-tauri/resources/macos"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DEST_DIR="$SCRIPT_DIR/../apps/desktop/src-tauri/resources/macos"
+echo "Current directory: $(pwd)"
+echo "Script directory: $SCRIPT_DIR"
+echo "Destination directory: $DEST_DIR"
 mkdir -p "$DEST_DIR"
+echo "Copying ttyd to $DEST_DIR/ttyd"
 cp ttyd "$DEST_DIR/ttyd"
 chmod +x "$DEST_DIR/ttyd"
+echo "Verifying copy..."
+ls -la "$DEST_DIR/ttyd"
 
 # Clean up
 cd /
