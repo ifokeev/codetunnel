@@ -76,8 +76,8 @@ jobs:
     - name: Install frontend dependencies
       run: pnpm install
       
-    - name: Update version from tag
-      if: startsWith(github.ref, 'refs/tags/v')
+    - name: Update version from tag (Unix)
+      if: startsWith(github.ref, 'refs/tags/v') && matrix.platform != 'windows-latest'
       run: |
         # Extract version from tag
         VERSION=${GITHUB_REF#refs/tags/v}
@@ -98,6 +98,33 @@ jobs:
         grep version tauri.conf.json
         echo "Updated Cargo.toml:"
         grep "^version" Cargo.toml
+        
+    - name: Update version from tag (Windows)
+      if: startsWith(github.ref, 'refs/tags/v') && matrix.platform == 'windows-latest'
+      shell: pwsh
+      run: |
+        # Extract version from tag
+        $version = "${{ github.ref }}".Replace("refs/tags/v", "")
+        Write-Host "Updating version to $version"
+        
+        # Update version files
+        cd apps/desktop/src-tauri
+        
+        # Update tauri.conf.json
+        $tauriConf = Get-Content tauri.conf.json -Raw
+        $tauriConf = $tauriConf -replace '"version": "[^"]*"', "`"version`": `"$version`""
+        Set-Content tauri.conf.json $tauriConf
+        
+        # Update Cargo.toml
+        $cargoToml = Get-Content Cargo.toml -Raw
+        $cargoToml = $cargoToml -replace '^version = "[^"]*"', "version = `"$version`""
+        Set-Content Cargo.toml $cargoToml
+        
+        # Show the updates
+        Write-Host "Updated tauri.conf.json:"
+        Select-String -Path tauri.conf.json -Pattern "version"
+        Write-Host "Updated Cargo.toml:"
+        Select-String -Path Cargo.toml -Pattern "^version"
       
     - name: Build ttyd for macOS
       if: matrix.platform == 'macos-latest'
