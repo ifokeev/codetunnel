@@ -1,11 +1,27 @@
 # CodeTunnel
 
 <p align="center">
-  <img src="apps/desktop/src/assets/codetunnel-logo.png" alt="CodeTunnel Logo" width="128" height="128">
+  <img src="apps/desktop/src/assets/logo-no-text.svg" alt="CodeTunnel Logo" width="128" height="128">
 </p>
 
 <p align="center">
-  <strong>Instant, secure development tunnels for web terminals</strong>
+  <strong>Instant, secure development tunnels for web terminals</strong><br>
+  <em>Perfect for AI-assisted coding from anywhere 🌴</em>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ifokeev/codetunnel/releases/latest">
+    <img src="https://img.shields.io/github/v/release/ifokeev/codetunnel?style=flat-square" alt="Latest Release">
+  </a>
+  <a href="https://github.com/ifokeev/codetunnel/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/ifokeev/codetunnel?style=flat-square" alt="License">
+  </a>
+  <a href="https://github.com/ifokeev/codetunnel/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/ifokeev/codetunnel/build.yml?style=flat-square" alt="Build Status">
+  </a>
+  <a href="https://ifokeev.github.io/codetunnel/">
+    <img src="https://img.shields.io/badge/website-live-brightgreen?style=flat-square" alt="Website">
+  </a>
 </p>
 
 <p align="center">
@@ -23,23 +39,41 @@ CodeTunnel is a cross-platform desktop application that provides instant, secure
 
 ## Features
 
+- 🌴 **Hawaiian-Themed UI** - Beautiful tropical design with palm tree branding
 - 🚀 **Instant Terminal Access** - Launch a web terminal in seconds
-- 🌐 **Secure Tunnels** - Powered by Cloudflare's free quick tunnels
+- 🌐 **Secure Tunnels** - Powered by Cloudflare's global network
 - 🔒 **URL-based Security** - Each session protected by a unique 32-character token
-- 📱 **Mobile Friendly** - Works on all devices with a web browser
-- 🖥️ **Cross-Platform** - Runs on macOS, Windows, and Linux
-- 🎨 **Modern UI** - Clean, dark-themed interface
-- ⚡ **Lightweight** - Minimal resource usage with Rust backend
+- 📱 **Mobile Friendly** - Works perfectly with AI coding assistants on iPad/mobile
+- 💻 **Cross-Platform** - Native apps for macOS, Windows, and Linux
+- 🤖 **AI Development Ready** - Optimized for Claude Code, Gemini CLI, and other AI tools
+- ⚡ **Lightning Fast** - Minimal latency with Rust backend
 
 ## Installation
 
 ### Download Pre-built Binaries
 
-Visit the [Releases](https://github.com/ifokeev/codetunnel/releases) page to download the latest version for your platform:
+Visit our [website](https://ifokeev.github.io/codetunnel/) or [GitHub Releases](https://github.com/ifokeev/codetunnel/releases) to download:
 
-- **macOS**: `CodeTunnel_x.x.x_universal.dmg` (Intel & Apple Silicon)
-- **Windows**: `CodeTunnel_x.x.x_x64-setup.exe`
-- **Linux**: `codetunnel_x.x.x_amd64.AppImage` or `.deb`
+#### macOS
+- Download: `CodeTunnel_x.x.x_universal.dmg` (Intel & Apple Silicon)
+- First run: Right-click and select "Open" to bypass Gatekeeper
+- Or remove quarantine: `xattr -cr /Applications/CodeTunnel.app`
+
+#### Windows
+- Download: `CodeTunnel_x.x.x_x64-setup.exe` or `.msi`
+- Run installer and follow the wizard
+- First run: Click "More info" → "Run anyway" if SmartScreen appears
+
+#### Linux
+- **AppImage** (recommended): `CodeTunnel_x.x.x_amd64.AppImage`
+  ```bash
+  chmod +x CodeTunnel_*.AppImage
+  ./CodeTunnel_*.AppImage
+  ```
+- **Debian/Ubuntu**: `codetunnel_x.x.x_amd64.deb`
+  ```bash
+  sudo dpkg -i codetunnel_*.deb
+  ```
 
 ### Install from Source
 
@@ -176,6 +210,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - 🐛 [Issue Tracker](https://github.com/ifokeev/codetunnel/issues)
 - 💬 [Discussions](https://github.com/ifokeev/codetunnel/discussions)
 
+## Roadmap
+
+- [ ] Auto-updater with signature verification
+- [ ] Multiple concurrent terminal sessions
+- [ ] Session persistence and reconnection
+- [ ] Custom shell configuration
+- [ ] Package manager distribution (Homebrew, Scoop, etc.)
+- [ ] Browser extension for quick access
+- [ ] Team collaboration features
+
 ---
 
-<p align="center">Made with ❤️ by the CodeTunnel team</p>
+<p align="center">
+  <strong>Aloha! 🌺</strong><br>
+  Made with ❤️ and 🌴 by the CodeTunnel team
+</p>
