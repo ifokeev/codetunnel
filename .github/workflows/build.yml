@@ -1,0 +1,153 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  RUST_BACKTRACE: 1
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: 'macos-latest'
+            args: '--target universal-apple-darwin'
+            name: 'macOS Universal'
+          - platform: 'ubuntu-22.04'
+            args: ''
+            name: 'Linux'
+          - platform: 'windows-latest'
+            args: ''
+            name: 'Windows'
+
+    runs-on: ${{ matrix.platform }}
+    name: Build - ${{ matrix.name }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+        run_install: false
+        
+    - name: Get pnpm store directory
+      shell: bash
+      run: |
+        echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+        
+    - uses: actions/cache@v4
+      name: Setup pnpm cache
+      with:
+        path: ${{ env.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+          
+    - name: Install Rust stable
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+        
+    - name: Rust cache
+      uses: swatinem/rust-cache@v2
+      with:
+        workspaces: './apps/desktop/src-tauri -> target'
+        
+    - name: Install dependencies (Ubuntu)
+      if: matrix.platform == 'ubuntu-22.04'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+        
+    - name: Install frontend dependencies
+      run: pnpm install
+      
+    - name: Download binaries
+      run: |
+        chmod +x ./scripts/download-binaries.sh
+        ./scripts/download-binaries.sh
+      shell: bash
+      
+    - name: Build ttyd for macOS
+      if: matrix.platform == 'macos-latest'
+      run: |
+        brew install cmake libwebsockets libevent jansson openssl@3
+        chmod +x ./scripts/build-ttyd-macos.sh
+        ./scripts/build-ttyd-macos.sh
+      
+    - name: Build Tauri App
+      uses: tauri-apps/tauri-action@v0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Tauri updater keys (optional - only needed if using auto-updater)
+        TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY || '' }}
+        TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD || '' }}
+      with:
+        projectPath: apps/desktop
+        args: ${{ matrix.args }}
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: artifacts-${{ matrix.platform }}
+        path: |
+          apps/desktop/src-tauri/target/release/bundle/
+          apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle/
+        retention-days: 7
+        
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        draft: true
+        files: |
+          artifacts/**/*.dmg
+          artifacts/**/*.exe
+          artifacts/**/*.msi
+          artifacts/**/*.deb
+          artifacts/**/*.AppImage
+          artifacts/**/*.app.tar.gz
+        body: |
+          # CodeTunnel Release
+          
+          ## What's New
+          - 
+          
+          ## Downloads
+          - **macOS**: Download the `.dmg` file (Universal - works on Intel and Apple Silicon)
+          - **Windows**: Download the `.msi` or `.exe` installer
+          - **Linux**: Download the `.AppImage` (portable) or `.deb` (Debian/Ubuntu)
+          
+          ## Installation
+          See the [README](https://github.com/${{ github.repository }}/blob/main/README.md#installation) for detailed instructions.
+          
+          ## Changelog
+          See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for detailed changes.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
