@@ -27,6 +27,41 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
+      - name: Get latest release info
+        id: latest_release
+        run: |
+          # Try to get the latest release
+          RELEASE_INFO=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest)
+          
+          if echo "$RELEASE_INFO" | grep -q "Not Found"; then
+            echo "No releases found, using default"
+            echo "version=v1.0.0" >> $GITHUB_OUTPUT
+            echo "version_number=1.0.0" >> $GITHUB_OUTPUT
+            echo "has_release=false" >> $GITHUB_OUTPUT
+          else
+            VERSION=$(echo "$RELEASE_INFO" | jq -r '.tag_name // "v1.0.0"')
+            VERSION_NUMBER=${VERSION#v}
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "version_number=$VERSION_NUMBER" >> $GITHUB_OUTPUT
+            echo "has_release=true" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Update version in HTML
+        run: |
+          # Create a version.json file
+          cat > docs/version.json << EOF
+          {
+            "version": "${{ steps.latest_release.outputs.version }}",
+            "versionNumber": "${{ steps.latest_release.outputs.version_number }}",
+            "hasRelease": ${{ steps.latest_release.outputs.has_release }}
+          }
+          EOF
+          
+          # Also update x.x.x placeholders in HTML if release exists
+          if [ "${{ steps.latest_release.outputs.has_release }}" = "true" ]; then
+            sed -i "s/x\.x\.x/${{ steps.latest_release.outputs.version_number }}/g" docs/index.html
+          fi
+        
       - name: Setup Pages
         uses: actions/configure-pages@v4
         

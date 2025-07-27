@@ -75,37 +75,77 @@ function copyToClipboard(text) {
 // Update download links with latest version
 async function updateDownloadLinks() {
     try {
+        // First try to fetch from version.json (created during deployment)
+        const versionResponse = await fetch('./version.json');
+        if (versionResponse.ok) {
+            const versionData = await versionResponse.json();
+            if (versionData.hasRelease) {
+                updateVersionInfo(versionData.version, versionData.versionNumber);
+                return;
+            }
+        }
+    } catch (error) {
+        console.log('version.json not found, trying GitHub API');
+    }
+    
+    // Fallback to GitHub API
+    try {
         const response = await fetch('https://api.github.com/repos/ifokeev/codetunnel/releases/latest');
+        
+        if (response.status === 404) {
+            // No releases yet, use default version
+            console.log('No releases found, using default version');
+            setDefaultVersion();
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         const version = data.tag_name || 'v1.0.0';
-        
-        // Remove 'v' prefix if present
         const versionNumber = version.replace('v', '');
         
-        // Update download links with actual version
-        document.querySelectorAll('.download-card').forEach(card => {
-            const href = card.getAttribute('href');
-            if (href && href.includes('x.x.x')) {
-                const newHref = href.replace('x.x.x', versionNumber);
-                card.setAttribute('href', newHref);
-                console.log('Updated download link:', newHref);
-            }
-        });
-        
-        // Also update any visible version text
-        document.querySelectorAll('.version-text').forEach(el => {
-            el.textContent = version;
-        });
+        updateVersionInfo(version, versionNumber);
     } catch (error) {
         console.error('Failed to fetch latest version:', error);
-        // Fallback to a default version
-        document.querySelectorAll('.download-card').forEach(card => {
-            const href = card.getAttribute('href');
-            if (href && href.includes('x.x.x')) {
-                card.setAttribute('href', href.replace('x.x.x', '1.0.0'));
-            }
-        });
+        setDefaultVersion();
     }
+}
+
+function updateVersionInfo(version, versionNumber) {
+    // Update download links with actual version
+    document.querySelectorAll('.download-card').forEach(card => {
+        const href = card.getAttribute('href');
+        if (href && href.includes('x.x.x')) {
+            const newHref = href.replace('x.x.x', versionNumber);
+            card.setAttribute('href', newHref);
+            console.log('Updated download link:', newHref);
+        }
+    });
+    
+    // Also update any visible version text
+    document.querySelectorAll('.version-text').forEach(el => {
+        el.textContent = version;
+    });
+}
+
+function setDefaultVersion() {
+    const defaultVersion = '1.0.0';
+    
+    // Update download links with default version
+    document.querySelectorAll('.download-card').forEach(card => {
+        const href = card.getAttribute('href');
+        if (href && href.includes('x.x.x')) {
+            card.setAttribute('href', href.replace('x.x.x', defaultVersion));
+        }
+    });
+    
+    // Update version text to show it's a preview
+    document.querySelectorAll('.version-text').forEach(el => {
+        el.textContent = 'Coming Soon';
+    });
 }
 
 // Initialize on load
