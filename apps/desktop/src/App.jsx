@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { listen } from '@tauri-apps/api/event';
 import './App.css';
+import logoUrl from './assets/logo-no-text.svg?url';
 
 const LoadingOverlay = ({ message }) => (
   <div className="loading-overlay">
@@ -127,7 +128,7 @@ function App() {
       {loading && <LoadingOverlay message={loadingMessage} />}
       
       <header className="header">
-        <img src="/src/assets/logo-no-text.svg" alt="CodeTunnel" className="logo" />
+        <img src={logoUrl} alt="CodeTunnel" className="logo" />
         <div className="title-container">
           <h1>CodeTunnel</h1>
           <p>Secure development tunnels</p>

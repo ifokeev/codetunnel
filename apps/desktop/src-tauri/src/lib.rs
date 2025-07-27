@@ -58,8 +58,24 @@ fn get_binary_path(app_handle: &tauri::AppHandle, binary_name: &str) -> Result<P
         .join(platform_dir)
         .join(binary_filename);
     
+    // Debug: print the resource path
+    println!("Resource path: {:?}", resource_path);
+    println!("Looking for binary at: {:?}", binary_path);
+    
     // Check if binary exists
     if !binary_path.exists() {
+        // Try to list what's in the directory
+        let parent = binary_path.parent();
+        if let Some(p) = parent {
+            println!("Directory contents of {:?}:", p);
+            if let Ok(entries) = fs::read_dir(p) {
+                for entry in entries {
+                    if let Ok(e) = entry {
+                        println!("  - {:?}", e.path());
+                    }
+                }
+            }
+        }
         return Err(format!("Binary {} not found at {:?}. Please ensure the binary is included in the resources/{} directory.", 
             binary_name, binary_path, platform_dir));
     }
