@@ -9,9 +9,29 @@ CLOUDFLARED_VERSION="2024.12.2"
 
 # Parse arguments
 SKIP_MACOS_TTYD=false
-if [[ "$1" == "--skip-macos-ttyd" ]]; then
-    SKIP_MACOS_TTYD=true
+CURRENT_PLATFORM_ONLY=false
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --skip-macos-ttyd) SKIP_MACOS_TTYD=true ;;
+        --current-platform-only) CURRENT_PLATFORM_ONLY=true ;;
+        *) echo "Unknown parameter: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+# Detect current platform
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    CURRENT_PLATFORM="macos"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    CURRENT_PLATFORM="linux"
+elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "win32" ]]; then
+    CURRENT_PLATFORM="windows"
+else
+    CURRENT_PLATFORM="unknown"
 fi
+
+echo "Detected platform: $CURRENT_PLATFORM"
 
 # Create directories
 mkdir -p apps/desktop/src-tauri/resources/{macos,windows,linux}
@@ -20,7 +40,8 @@ mkdir -p apps/desktop/src-tauri/resources/macos/{arm64,x86_64}
 echo "Downloading binaries..."
 
 # macOS binaries
-if [[ "$OSTYPE" == "darwin"* ]]; then
+if [[ "$CURRENT_PLATFORM_ONLY" == "false" ]] || [[ "$CURRENT_PLATFORM" == "macos" ]]; then
+  if [[ "$OSTYPE" == "darwin"* ]]; then
     echo "Downloading macOS binaries..."
     
     # For macOS, we'll use pre-built binaries from a GitHub Actions workflow
@@ -80,31 +101,36 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         -o /tmp/cloudflared-darwin.tgz
     tar -xzf /tmp/cloudflared-darwin.tgz -C apps/desktop/src-tauri/resources/macos/
     rm /tmp/cloudflared-darwin.tgz
+  fi
 fi
 
 # Linux binaries
-echo "Downloading Linux binaries..."
+if [[ "$CURRENT_PLATFORM_ONLY" == "false" ]] || [[ "$CURRENT_PLATFORM" == "linux" ]]; then
+    echo "Downloading Linux binaries..."
 
-# Download ttyd for Linux
-curl -L "https://github.com/tsl0922/ttyd/releases/download/${TTYD_VERSION}/ttyd.x86_64" \
-    -o apps/desktop/src-tauri/resources/linux/ttyd
-chmod +x apps/desktop/src-tauri/resources/linux/ttyd
+    # Download ttyd for Linux
+    curl -L "https://github.com/tsl0922/ttyd/releases/download/${TTYD_VERSION}/ttyd.x86_64" \
+        -o apps/desktop/src-tauri/resources/linux/ttyd
+    chmod +x apps/desktop/src-tauri/resources/linux/ttyd
 
-# Download cloudflared for Linux
-curl -L "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-amd64" \
-    -o apps/desktop/src-tauri/resources/linux/cloudflared
-chmod +x apps/desktop/src-tauri/resources/linux/cloudflared
+    # Download cloudflared for Linux
+    curl -L "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-amd64" \
+        -o apps/desktop/src-tauri/resources/linux/cloudflared
+    chmod +x apps/desktop/src-tauri/resources/linux/cloudflared
+fi
 
 # Windows binaries
-echo "Downloading Windows binaries..."
+if [[ "$CURRENT_PLATFORM_ONLY" == "false" ]] || [[ "$CURRENT_PLATFORM" == "windows" ]]; then
+    echo "Downloading Windows binaries..."
 
-# Download ttyd for Windows
-curl -L "https://github.com/tsl0922/ttyd/releases/download/${TTYD_VERSION}/ttyd.win32.exe" \
-    -o apps/desktop/src-tauri/resources/windows/ttyd.exe
+    # Download ttyd for Windows
+    curl -L "https://github.com/tsl0922/ttyd/releases/download/${TTYD_VERSION}/ttyd.win32.exe" \
+        -o apps/desktop/src-tauri/resources/windows/ttyd.exe
 
-# Download cloudflared for Windows
-curl -L "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-windows-amd64.exe" \
-    -o apps/desktop/src-tauri/resources/windows/cloudflared.exe
+    # Download cloudflared for Windows
+    curl -L "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-windows-amd64.exe" \
+        -o apps/desktop/src-tauri/resources/windows/cloudflared.exe
+fi
 
 echo "Binary download complete!"
 echo ""

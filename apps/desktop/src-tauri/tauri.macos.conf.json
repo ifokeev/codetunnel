@@ -1,0 +1,8 @@
+{
+  "bundle": {
+    "resources": [
+      "resources/README.md",
+      "resources/macos/"
+    ]
+  }
+}

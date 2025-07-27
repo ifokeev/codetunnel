@@ -9,7 +9,10 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "tauri:build:mac": "tauri build --config tauri.macos.conf.json",
+    "tauri:build:win": "tauri build --config tauri.windows.conf.json",
+    "tauri:build:linux": "tauri build --config tauri.linux.conf.json"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.7.1",
