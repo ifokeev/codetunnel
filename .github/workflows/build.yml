@@ -105,8 +105,12 @@ jobs:
       with:
         name: artifacts-${{ matrix.platform }}
         path: |
-          apps/desktop/src-tauri/target/release/bundle/
-          apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle/
+          apps/desktop/src-tauri/target/release/bundle/**/*.deb
+          apps/desktop/src-tauri/target/release/bundle/**/*.AppImage
+          apps/desktop/src-tauri/target/release/bundle/**/*.exe
+          apps/desktop/src-tauri/target/release/bundle/**/*.msi
+          apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle/**/*.dmg
+          apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle/**/*.app.tar.gz
         retention-days: 7
         
   release:
@@ -129,12 +133,12 @@ jobs:
       with:
         draft: true
         files: |
-          artifacts/**/*.dmg
-          artifacts/**/*.exe
-          artifacts/**/*.msi
-          artifacts/**/*.deb
-          artifacts/**/*.AppImage
-          artifacts/**/*.app.tar.gz
+          artifacts/**/dmg/*.dmg
+          artifacts/**/nsis/*.exe
+          artifacts/**/msi/*.msi
+          artifacts/**/deb/*.deb
+          artifacts/**/appimage/*.AppImage
+          artifacts/**/macos/*.app.tar.gz
         body: |
           # CodeTunnel Release
           
