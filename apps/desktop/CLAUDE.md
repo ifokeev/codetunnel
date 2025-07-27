@@ -12,7 +12,7 @@ The project is structured as a monorepo using pnpm workspaces, with the desktop 
 
 ### Setup (from project root)
 - `pnpm install` - Install all workspace dependencies
-- `cd apps/desktop && ./scripts/download-binaries.sh` - Download ttyd and cloudflared binaries for all platforms
+- `./scripts/download-binaries.sh` - Download ttyd and cloudflared binaries for all platforms
 
 ### Development (from project root)
 - `pnpm tauri:dev` - Run desktop app in development mode with hot reload
@@ -97,7 +97,17 @@ The app implements these core commands:
 
 ### Binary Sources
 
-- **ttyd**: Currently using system-installed version via Homebrew
-  - Future: Use official releases from https://github.com/tsl0922/ttyd
+- **ttyd**: 
+  - Linux/Windows: Downloaded from official releases
+  - macOS: Built from source or copied from Homebrew
+  - Use `./scripts/build-ttyd-macos.sh` to create universal binary
 - **cloudflared**: Downloaded from official Cloudflare releases
   - Version specified in `scripts/download-binaries.sh`
+
+### macOS Distribution
+
+Since ttyd doesn't provide official macOS binaries:
+
+1. **Development**: Use system ttyd (`brew install ttyd`)
+2. **Distribution**: Build universal binary with `./scripts/build-ttyd-macos.sh`
+3. **Alternative**: Bundle pre-built binaries from trusted sources

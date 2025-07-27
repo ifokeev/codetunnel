@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A1 Shell is a monorepo project that provides instant, secure web terminals. It's structured using pnpm workspaces to allow for future expansion with multiple applications and shared packages.
+CodeTunnel is a monorepo project that provides instant, secure development tunnels for web terminals. It's structured using pnpm workspaces to allow for future expansion with multiple applications and shared packages.
 
 ## Repository Structure
 
 ```
-a1-shell/
+codetunnel/
 ├── apps/
 │   └── desktop/        # Tauri 2.0 desktop application
 ├── packages/          # Shared packages (future)
