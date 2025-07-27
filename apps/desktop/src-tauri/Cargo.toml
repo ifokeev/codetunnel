@@ -1,6 +1,6 @@
 [package]
 name = "codetunnel"
-version = "0.1.0"
+version = "1.0.0"
 description = "CodeTunnel - Secure Development Tunnels"
 authors = ["codetunnel"]
 edition = "2021"

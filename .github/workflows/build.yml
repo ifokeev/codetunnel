@@ -76,6 +76,29 @@ jobs:
     - name: Install frontend dependencies
       run: pnpm install
       
+    - name: Update version from tag
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        # Extract version from tag
+        VERSION=${GITHUB_REF#refs/tags/v}
+        echo "Updating version to $VERSION"
+        
+        # Update version in tauri.conf.json
+        cd apps/desktop/src-tauri
+        if [[ "$RUNNER_OS" == "macOS" ]]; then
+          sed -i '' "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" tauri.conf.json
+          sed -i '' "s/^version = \".*\"/version = \"$VERSION\"/" Cargo.toml
+        else
+          sed -i "s/\"version\": \".*\"/\"version\": \"$VERSION\"/" tauri.conf.json
+          sed -i "s/^version = \".*\"/version = \"$VERSION\"/" Cargo.toml
+        fi
+        
+        # Show the updates
+        echo "Updated tauri.conf.json:"
+        grep version tauri.conf.json
+        echo "Updated Cargo.toml:"
+        grep "^version" Cargo.toml
+      
     - name: Build ttyd for macOS
       if: matrix.platform == 'macos-latest'
       run: |
