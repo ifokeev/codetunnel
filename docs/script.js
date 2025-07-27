@@ -75,7 +75,7 @@ function copyToClipboard(text) {
 // Update download links with latest version
 async function updateDownloadLinks() {
     try {
-        const response = await fetch('https://api.github.com/repos/yourusername/devtunnel/releases/latest');
+        const response = await fetch('https://api.github.com/repos/ifokeev/codetunnel/releases/latest');
         const data = await response.json();
         const version = data.tag_name;
         
