@@ -85,9 +85,9 @@ jobs:
     - name: Build ttyd for macOS
       if: matrix.platform == 'macos-latest'
       run: |
-        brew install cmake libwebsockets libevent jansson openssl@3
-        chmod +x ./scripts/build-ttyd-macos.sh
-        ./scripts/build-ttyd-macos.sh
+        brew install cmake libwebsockets libevent jansson json-c openssl@3 libuv
+        chmod +x ./scripts/build-ttyd-macos-ci.sh
+        ./scripts/build-ttyd-macos-ci.sh
       
     - name: Build Tauri App
       uses: tauri-apps/tauri-action@v0

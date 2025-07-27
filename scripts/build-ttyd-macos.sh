@@ -35,19 +35,27 @@ cd ttyd
 
 # Install dependencies with Homebrew
 echo "Installing build dependencies..."
-brew install --quiet libwebsockets libevent jansson openssl@3 2>/dev/null || true
+brew install --quiet libwebsockets libevent jansson json-c openssl@3 2>/dev/null || true
 
 # Build for x86_64
 echo "Building for x86_64..."
 mkdir -p build-x86_64
 cd build-x86_64
-cmake .. \
-    -DCMAKE_OSX_ARCHITECTURES=x86_64 \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@3 \
-    -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@3/lib
-make -j$(sysctl -n hw.ncpu)
-cd ..
+
+# For x86_64 on Apple Silicon, we need to use Rosetta libraries
+if [[ $(uname -m) == "arm64" ]]; then
+    # On Apple Silicon, skip x86_64 build or use Rosetta
+    echo "Skipping x86_64 build on Apple Silicon..."
+    cd ..
+else
+    cmake .. \
+        -DCMAKE_OSX_ARCHITECTURES=x86_64 \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl@3 \
+        -DOPENSSL_LIBRARIES=/usr/local/opt/openssl@3/lib
+    make -j$(sysctl -n hw.ncpu)
+    cd ..
+fi
 
 # Build for arm64
 echo "Building for arm64..."
@@ -61,12 +69,25 @@ cmake .. \
 make -j$(sysctl -n hw.ncpu)
 cd ..
 
-# Create universal binary
-echo "Creating universal binary..."
-lipo -create \
-    build-x86_64/ttyd \
-    build-arm64/ttyd \
-    -output ttyd-universal
+# Create universal binary or use single architecture
+echo "Creating binary..."
+if [[ $(uname -m) == "arm64" ]]; then
+    # On Apple Silicon, just use arm64 binary
+    cp build-arm64/ttyd ttyd-universal
+else
+    # On Intel, create universal binary if both exist
+    if [[ -f build-x86_64/ttyd && -f build-arm64/ttyd ]]; then
+        lipo -create \
+            build-x86_64/ttyd \
+            build-arm64/ttyd \
+            -output ttyd-universal
+    elif [[ -f build-x86_64/ttyd ]]; then
+        cp build-x86_64/ttyd ttyd-universal
+    else
+        echo "Error: No ttyd binary found!"
+        exit 1
+    fi
+fi
 
 # Verify the binary
 echo "Verifying universal binary..."
