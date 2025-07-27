@@ -27,8 +27,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # or fall back to system ttyd if available
     echo "Setting up ttyd for macOS..."
     
-    # First, try to use system ttyd if available
-    if [[ "$SKIP_MACOS_TTYD" == "true" ]]; then
+    # Check if ttyd binary already exists (from build script)
+    if [[ -f "apps/desktop/src-tauri/resources/macos/ttyd" ]] && [[ -x "apps/desktop/src-tauri/resources/macos/ttyd" ]]; then
+        echo "ttyd binary already exists, skipping download"
+        TTYD_SIZE=$(stat -f%z "apps/desktop/src-tauri/resources/macos/ttyd" 2>/dev/null || stat -c%s "apps/desktop/src-tauri/resources/macos/ttyd" 2>/dev/null || echo "unknown")
+        echo "Existing ttyd size: $TTYD_SIZE bytes"
+    elif [[ "$SKIP_MACOS_TTYD" == "true" ]]; then
         echo "Skipping macOS ttyd (will be built separately)"
     elif command -v ttyd &> /dev/null; then
         echo "Found system ttyd, creating universal binary..."

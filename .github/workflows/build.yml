@@ -76,25 +76,33 @@ jobs:
     - name: Install frontend dependencies
       run: pnpm install
       
-    - name: Download binaries
-      run: |
-        chmod +x ./scripts/download-binaries.sh
-        # Skip macOS ttyd download since we build it in the next step
-        if [[ "${{ matrix.platform }}" == "macos-latest" ]]; then
-          # Only download non-macOS binaries
-          ./scripts/download-binaries.sh --skip-macos-ttyd
-        else
-          ./scripts/download-binaries.sh
-        fi
-      shell: bash
-      
     - name: Build ttyd for macOS
       if: matrix.platform == 'macos-latest'
       run: |
         brew install cmake libwebsockets libevent jansson json-c openssl@3 libuv
         chmod +x ./scripts/build-ttyd-macos-ci.sh
         ./scripts/build-ttyd-macos-ci.sh
+        # Verify ttyd was built successfully
+        ls -la apps/desktop/src-tauri/resources/macos/
+        if [ ! -f "apps/desktop/src-tauri/resources/macos/ttyd" ]; then
+          echo "ERROR: ttyd binary was not created!"
+          exit 1
+        fi
+        echo "ttyd binary size: $(stat -f%z apps/desktop/src-tauri/resources/macos/ttyd) bytes"
+        
+    - name: Download binaries
+      run: |
+        chmod +x ./scripts/download-binaries.sh
+        ./scripts/download-binaries.sh
+      shell: bash
       
+    - name: Verify binaries before Tauri build
+      run: |
+        echo "Checking binaries in resources directory:"
+        find apps/desktop/src-tauri/resources -type f -name "ttyd*" -o -name "cloudflared*" | while read f; do
+          echo "$f: $(file "$f") - Size: $(stat -f%z "$f" 2>/dev/null || stat -c%s "$f" 2>/dev/null) bytes"
+        done
+        
     - name: Build Tauri App
       uses: tauri-apps/tauri-action@v0
       env:
