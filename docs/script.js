@@ -77,17 +77,34 @@ async function updateDownloadLinks() {
     try {
         const response = await fetch('https://api.github.com/repos/ifokeev/codetunnel/releases/latest');
         const data = await response.json();
-        const version = data.tag_name;
+        const version = data.tag_name || 'v1.0.0';
+        
+        // Remove 'v' prefix if present
+        const versionNumber = version.replace('v', '');
         
         // Update download links with actual version
         document.querySelectorAll('.download-card').forEach(card => {
             const href = card.getAttribute('href');
-            if (href) {
-                card.setAttribute('href', href.replace('x.x.x', version.replace('v', '')));
+            if (href && href.includes('x.x.x')) {
+                const newHref = href.replace('x.x.x', versionNumber);
+                card.setAttribute('href', newHref);
+                console.log('Updated download link:', newHref);
             }
+        });
+        
+        // Also update any visible version text
+        document.querySelectorAll('.version-text').forEach(el => {
+            el.textContent = version;
         });
     } catch (error) {
         console.error('Failed to fetch latest version:', error);
+        // Fallback to a default version
+        document.querySelectorAll('.download-card').forEach(card => {
+            const href = card.getAttribute('href');
+            if (href && href.includes('x.x.x')) {
+                card.setAttribute('href', href.replace('x.x.x', '1.0.0'));
+            }
+        });
     }
 }
 
