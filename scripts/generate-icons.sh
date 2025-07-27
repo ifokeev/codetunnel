@@ -80,7 +80,21 @@ fi
 # Clean up iconset directory
 rm -rf "$ICON_DIR/icon.iconset"
 
+# Generate favicon for web docs
+DOCS_DIR="docs"
+echo ""
+echo "Generating favicon for web docs..."
+convert -background none "$SOURCE_SVG" -resize 32x32 -define png:color-type=6 -define png:bit-depth=8 "$DOCS_DIR/favicon.png"
+
+# Also create apple-touch-icon for mobile devices
+echo "Creating apple-touch-icon.png for mobile devices..."
+convert -background none "$SOURCE_SVG" -resize 180x180 -define png:color-type=6 -define png:bit-depth=8 "$DOCS_DIR/apple-touch-icon.png"
+
+echo ""
 echo "Icon generation complete!"
 echo ""
-echo "Generated icons in $ICON_DIR:"
+echo "Generated Tauri icons in $ICON_DIR:"
 ls -la "$ICON_DIR"/*.{png,ico,icns} 2>/dev/null | awk '{print "  - " $9}'
+echo ""
+echo "Generated web icons in $DOCS_DIR:"
+ls -la "$DOCS_DIR"/{favicon,apple-touch-icon}.png 2>/dev/null | awk '{print "  - " $9}'

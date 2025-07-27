@@ -7,6 +7,30 @@
   background-color: var(--bg-panel);
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hawaiian wave pattern background */
+.app-container::before {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: 
+    radial-gradient(ellipse 300px 100px at 20% 100%, rgba(110, 172, 61, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse 300px 100px at 60% 100%, rgba(247, 173, 94, 0.06) 0%, transparent 40%);
+  pointer-events: none;
+  animation: waves 20s ease-in-out infinite;
+}
+
+@keyframes waves {
+  0%, 100% { transform: translateX(0) translateY(0); }
+  25% { transform: translateX(-20px) translateY(-10px); }
+  50% { transform: translateX(20px) translateY(-5px); }
+  75% { transform: translateX(-10px) translateY(-8px); }
 }
 
 .header {
@@ -14,6 +38,9 @@
   align-items: center;
   padding: 1.5rem;
   border-bottom: 1px solid var(--border);
+  background: rgba(10, 10, 10, 0.8);
+  position: relative;
+  z-index: 10;
 }
 
 .logo {
@@ -25,6 +52,10 @@
 .title-container h1 {
   font-size: 1.5rem;
   font-weight: 600;
+  background: var(--gradient-tropical);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .title-container p {
@@ -43,10 +74,29 @@
   border-radius: 8px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(110, 172, 61, 0.2);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.status-panel::before {
+  content: '🌴';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 60px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.status-panel:hover {
+  border-color: rgba(110, 172, 61, 0.4);
+  box-shadow: 0 4px 20px rgba(110, 172, 61, 0.1);
 }
 
 .status-panel h2 {
@@ -70,8 +120,8 @@
 }
 
 .status-light.running {
-  background-color: var(--success);
-  box-shadow: 0 0 12px var(--success);
+  background-color: var(--primary-color);
+  box-shadow: 0 0 12px var(--primary-color);
 }
 
 .status-light.stopped {
@@ -82,7 +132,14 @@
   background-color: var(--bg-secondary);
   border-radius: 8px;
   padding: 1.5rem;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(110, 172, 61, 0.2);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.connection-panel:hover {
+  border-color: rgba(110, 172, 61, 0.4);
+  box-shadow: 0 4px 20px rgba(110, 172, 61, 0.1);
 }
 
 .connection-panel h2 {
@@ -120,6 +177,13 @@ input[type="text"] {
   border-radius: 4px;
   font-size: 0.875rem;
   font-family: 'Roboto Mono', monospace;
+  transition: all 0.2s;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(110, 172, 61, 0.2);
 }
 
 .copy-btn {
@@ -131,12 +195,17 @@ input[type="text"] {
   cursor: pointer;
   font-size: 0.875rem;
   transition: all 0.2s;
+  position: relative;
 }
 
 .copy-btn:hover {
-  color: var(--accent);
-  border-color: var(--accent);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
   box-shadow: 0 0 8px var(--shadow);
+}
+
+.copy-btn:active {
+  transform: scale(0.98);
 }
 
 .footer {
@@ -170,9 +239,15 @@ input[type="text"] {
   cursor: not-allowed;
 }
 
+.btn-start:not(:disabled) {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
 .btn-start:not(:disabled):hover {
-  color: var(--accent);
-  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(110, 172, 61, 0.1) 0%, rgba(247, 173, 94, 0.05) 100%);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
   box-shadow: 0 0 12px var(--shadow);
 }
 
@@ -214,7 +289,7 @@ input[type="text"] {
   width: 40px;
   height: 40px;
   border: 4px solid var(--border);
-  border-top-color: var(--accent);
+  border-top-color: var(--primary-color);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
